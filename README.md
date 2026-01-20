@@ -113,6 +113,82 @@ python export_onnx.py --config config.yaml --checkpoint models/xxx.pth --output 
 
 读取 `export_onnx` 配置，按设定的输入序列长度与 opset 导出。
 
+## C++ SDK 使用方法
+
+编译好的 SDK 位于 `sdk/` 目录。
+
+### 快速开始
+
+```bash
+cd sdk
+./run_inference.sh
+```
+
+该脚本自动编译（如需要）并运行推理，输出带标注的视频到 `output_fall_detected_cpp.mp4`。
+
+### 手动编译
+
+```bash
+cd sdk
+rm -rf build
+cmake -B build -S .
+cmake --build build -j$(nproc)
+```
+
+编译产物：
+- `build/fall_detection` - 可执行程序
+- `build/libfall_detection_sdk.so` - 动态链接库
+
+### 处理视频/图片
+
+```bash
+cd sdk/build
+./fall_detection --config_file ../config.json \
+                 --input <video_or_image> \
+                 --output <output_path>
+```
+
+支持格式：`.mp4 .avi .mov .mkv .wmv .jpg .jpeg .png`
+
+### 配置文件（config.json）
+
+关键参数：
+
+```json
+{
+    "models": {
+        "pose_model_path": "../../models/yolo11n-pose.onnx",
+        "fall_detection_model_path": "../../models/lstm_cls3_fps5.onnx"
+    },
+    "detection": {
+        "conf_threshold": 0.2,    // 姿态检测阈值（低=多人，高=精准）
+        "nms_threshold": 0.25     // NMS去重叠阈值
+    },
+    "fall_detection": {
+        "confidence_threshold": 0.7,  // 跌倒分类阈值
+        "sequence_length": 35         // 序列长度（帧数）
+    },
+    "device": {
+        "device_id": -1               // -1=CPU, ≥0=GPU设备ID
+    }
+}
+```
+
+### 核心组件
+
+| 模块 | 功能 | 输出 |
+|------|------|------|
+| PoseInferencer | YOLO11 姿态检测 | 人体边界框 + 17个关键点 |
+| SimpleByteTracker | 多目标跟踪 | 为每人分配持久化ID |
+| FallDetector | LSTM跌倒分类 | 3类概率（Fall/Normal/Static） |
+
+### 调试技巧
+
+- **检测人数过多**：降低 `conf_threshold`
+- **重叠框过多**：提高 `nms_threshold`
+- **前N帧无跌倒分类**：正常，缓冲35帧数据后开始分类
+- **查看库调用**：库接口定义在 `include/vmsdk.h`
+
 ## 备注
 
 - 处理后的文件命名已统一使用 `cls{cls}`（例如：`keypoints_sequences_cls3_fps30.npy`）。
