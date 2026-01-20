@@ -1,0 +1,8 @@
+/mnt/2/leo/fall_detection/sdk/build/CMakeFiles/fall_detection_sdk.dir
+/mnt/2/leo/fall_detection/sdk/build/CMakeFiles/fall_detection.dir
+/mnt/2/leo/fall_detection/sdk/build/CMakeFiles/edit_cache.dir
+/mnt/2/leo/fall_detection/sdk/build/CMakeFiles/rebuild_cache.dir
+/mnt/2/leo/fall_detection/sdk/build/CMakeFiles/list_install_components.dir
+/mnt/2/leo/fall_detection/sdk/build/CMakeFiles/install.dir
+/mnt/2/leo/fall_detection/sdk/build/CMakeFiles/install/local.dir
+/mnt/2/leo/fall_detection/sdk/build/CMakeFiles/install/strip.dir

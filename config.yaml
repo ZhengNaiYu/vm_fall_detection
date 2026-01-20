@@ -1,0 +1,73 @@
+train_fall_detection:
+  # experiment parameters
+  name: "fall_detection"
+  fps: 30  # IMPORTEMNT: Frame per second for video processing              
+  num_classes: 3 # IMPORTEMNT: Number of classes (2 or 3)
+  # training parameters
+  batch_size: 8 # batch size
+  learning_rate: 0.0005 # learning rate
+  weight_decay: 1e-6 # weight decay
+  num_epochs: 300 # maximum number of epochs
+  patience: 15 # early stopping patience
+  # model parameters
+  type: "LSTM"    # options: LSTM, GRU...
+  input_size: 34
+  hidden_size: 64
+  num_layers: 2
+  dropout_prob: 0.6
+  checkpoint: null
+  # dataset parameters
+  root_dir: "./data/processed/"
+  keypoints_template: "keypoints_sequences_cls{cls}_fps{fps}.npy"
+  labels_template: "labels_cls{cls}_fps{fps}.npy"
+  test_size: 0.2
+  val_ratio: 0.5
+  random_state: 42
+  # output parameters
+  results_dir: "results/"
+  model_dir: "models/"
+  model_name_template: "lstm_cls{cls}_fps{fps}.pth"
+  history_plot_template: "train_hist_cls{cls}_fps{fps}.png"
+
+
+yolo_pose_inference:
+  fps: 30  # IMPORTEMNT: Frame per second for video processing              
+  num_classes: 3 # IMPORTEMNT: Number of classes (2 or 3)
+  yolo_model_path: "models/yolo11x-pose.pt"
+  sequence_length: 35     # IMPORTEMNT: Number of frames per sequence
+  n_neighbors: 2          # KNN imputer
+  normalize: true
+  video_folders:
+    "data/videos/falls": 0
+    "data/videos/normal": 1
+    "data/videos/no_fall_static": 2
+  save_keypoints: "./data/processed/keypoints_sequences_cls{cls}_fps{fps}.npy"
+  save_labels: "./data/processed/labels_cls{cls}_fps{fps}.npy"
+
+
+track_fall_inference:
+  video_in: "./data/test_videos/recorded_video_20260115_111419_30fps.mp4" # Input video path
+  video_out: "./output_fall_detected.mp4" # Output video path
+  window: 35 # Number of frames per sequence for inference`
+  use_lstm: false # Whether to use LSTM for fall detection, or only physics-based method
+  yolo_model_path: "models/yolo11x-pose.pt" # Path to YOLO pose estimation model
+  tracker_config: "bytetrack.yaml" # Path to ByteTrack config file
+  lstm_model_path: "models/lstm_cls3_fps30.pth" # Path to trained LSTM model
+  physics_threshold: 0.2 # Threshold for physics-based fall detection
+  physics_frames: 10 # Number of frames to consider for physics-based fall detection
+  conf: 0.4 # YOLO confidence threshold
+
+
+export_onnx:
+  # Model parameters
+  type: "LSTM"                    # options: LSTM, GRU
+  input_size: 34
+  hidden_size: 64
+  num_layers: 2
+  dropout_prob: 0.6
+  num_classes: 3
+  sequence_length: 35             # For dummy input
+  # Export settings
+  checkpoint: "models/lstm_cls3_fps30.pth"
+  output: "models/lstm_cls3_fps30.onnx"
+  opset_version: 17

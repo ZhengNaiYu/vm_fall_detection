@@ -1,0 +1,23 @@
+{
+    "models": {
+        "pose_model_path": "../../models/yolo11n-pose.onnx",
+        "fall_detection_model_path": "../../models/lstm_cls3_fps5.onnx"
+    },
+    "device": {
+        "device_id": -1
+    },
+    "fall_detection": {
+        "num_classes": 3,
+        "class_names": ["Fall", "Normal", "Static"],
+        "sequence_length": 35,
+        "confidence_threshold": 0.7
+    },
+    "detection": {
+        "nms_threshold": 0.25,
+        "conf_threshold": 0.2
+    },
+    "display": {
+        "display_frequency": 1,
+        "progress_frequency": 30
+    }
+}

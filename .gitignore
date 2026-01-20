@@ -1,0 +1,30 @@
+# 排除大模型文件
+models/*.onnx
+models/*.pt
+models/*.pth
+models/*.weights
+
+# 排除其他大文件
+*.h5
+*.pkl
+*.pth
+*.tar
+*.zip
+*.7z
+
+# 排除数据文件夹
+data/videos/
+data/processed/
+dataset/
+images/
+videos/
+logs/
+
+# 排除Python缓存
+__pycache__/
+*.py[cod]
+*.so
+.Python
+.env
+venv/
+env/
