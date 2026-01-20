@@ -124,7 +124,7 @@ cd sdk
 ./run_inference.sh
 ```
 
-该脚本自动编译（如需要）并运行推理，输出带标注的视频到 `output_fall_detected_cpp.mp4`。
+该脚本自动编译（如需要）并运行推理，输出带标注视频到 `output_fall_detected_cpp.mp4`。
 
 ### 手动编译
 
