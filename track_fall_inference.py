@@ -50,9 +50,11 @@ def main():
     use_lstm = bool(infer_cfg["use_lstm"])
     physics_threshold = float(infer_cfg["physics_threshold"])
     physics_frames = int(infer_cfg["physics_frames"])
+    center_y_threshold = float(infer_cfg.get("center_y_threshold", 0.7))
     tracker_config = infer_cfg["tracker_config"]
     conf = float(infer_cfg["conf"])
     yolo_model_path = infer_cfg["yolo_model_path"]
+    class_names = infer_cfg.get("class_names", {0: "Fall", 1: "Normal", 2: "Static"})
 
     model = YOLO(yolo_model_path)
     pose_buffer = PoseBuffer(window_size=window)
@@ -115,14 +117,19 @@ def main():
                         output = fall_model(input_tensor)
                         pred = output.argmax(dim=1).item()
 
-                    fall = (pred == 0)
+                    action = class_names.get(pred, f"Unknown({pred})")
+                    is_fall = (pred == 0)
                 else:
-                    fall = False
+                    action = "Processing"
+                    is_fall = False
             else:
-                fall = detect_fall_by_physics(box_history[pid], physics_threshold, physics_frames)
+                # print(f'frame_cnt: {frame_cnt}, pid: {pid}, box_history len: {len(box_history[pid])}')
+                # input('Press Enter to continue...')
+                is_fall = detect_fall_by_physics(box_history[pid], physics_threshold, physics_frames, center_y_threshold, H)
+                action = "Fall" if is_fall else "Normal"
 
-            color = (0, 0, 255) if fall else (0, 255, 0)
-            label = f"ID {int(pid)} FALL Frame {frame_cnt}" if fall else f"ID {int(pid)} Frame {frame_cnt}"
+            color = (0, 0, 255) if is_fall else (0, 255, 0)
+            label = f"ID {int(pid)} {action} Frame {frame_cnt}"
 
             x1 = int(x - w / 2)
             y1 = int(y - h / 2)

@@ -46,21 +46,27 @@ yolo_pose_inference:
 
 
 track_fall_inference:
-  video_in: "./data/test_videos/recorded_video_20260115_111419_30fps.mp4" # Input video path
+  video_in: "/mnt/2/leo/fall_detection/data/test_videos/recorded_video_20260115_111419_30fps.mp4" # Input video path
   video_out: "./output_fall_detected.mp4" # Output video path
-  window: 35 # Number of frames per sequence for inference`
-  use_lstm: false # Whether to use LSTM for fall detection, or only physics-based method
+  window: 15 # Number of frames per sequence for inference`
+  use_lstm: true # Whether to use LSTM for fall detection, or only physics-based method
   yolo_model_path: "models/yolo11x-pose.pt" # Path to YOLO pose estimation model
   tracker_config: "bytetrack.yaml" # Path to ByteTrack config file
   lstm_model_path: "models/lstm_cls3_fps30.pth" # Path to trained LSTM model
   physics_threshold: 0.2 # Threshold for physics-based fall detection
-  physics_frames: 10 # Number of frames to consider for physics-based fall detection
+  physics_frames: 15 # Number of frames to consider for physics-based fall detection
+  center_y_threshold: 0.7 # Threshold for center point y-coordinate rise ratio
   conf: 0.4 # YOLO confidence threshold
   # LSTM model parameters
   input_size: 34
   hidden_size: 64
   num_layers: 2
   num_classes: 3
+  # Class names mapping
+  class_names:
+    0: "Fall"
+    1: "Normal"
+    2: "Static"
 
 
 export_onnx:
