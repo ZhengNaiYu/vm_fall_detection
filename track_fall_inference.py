@@ -18,18 +18,16 @@ def load_config(path):
 
 
 def build_fall_model(cfg):
-    model_cfg = cfg["model"]
-    exp_cfg = cfg["experiment"]
-    infer_cfg = cfg["inference"]
+    infer_cfg = cfg["track_fall_inference"]
 
     fall_model = FallDetectionLSTM(
-        input_size=model_cfg["input_size"],
-        hidden_size=model_cfg["hidden_size"],
-        num_layers=model_cfg["num_layers"],
-        num_classes=exp_cfg["num_classes"]
+        input_size=infer_cfg["input_size"],
+        hidden_size=infer_cfg["hidden_size"],
+        num_layers=infer_cfg["num_layers"],
+        num_classes=infer_cfg["num_classes"]
     )
 
-    ckpt_path = infer_cfg.get("lstm_model_path") or model_cfg.get("checkpoint")
+    ckpt_path = infer_cfg.get("lstm_model_path")
     if ckpt_path:
         state_dict = torch.load(ckpt_path, map_location="cpu")
         fall_model.load_state_dict(state_dict)

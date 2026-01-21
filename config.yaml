@@ -56,6 +56,11 @@ track_fall_inference:
   physics_threshold: 0.2 # Threshold for physics-based fall detection
   physics_frames: 10 # Number of frames to consider for physics-based fall detection
   conf: 0.4 # YOLO confidence threshold
+  # LSTM model parameters
+  input_size: 34
+  hidden_size: 64
+  num_layers: 2
+  num_classes: 3
 
 
 export_onnx:
