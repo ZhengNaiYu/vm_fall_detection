@@ -1,0 +1,21 @@
+# Ultralytics 🚀 AGPL-3.0 License - https://ultralytics.com/license
+
+# ByteTrack tracker defaults for mode="track"
+# Docs: https://docs.ultralytics.com/modes/track/
+
+tracker_type: bytetrack # (str) Tracker backend: botsort|bytetrack; choose bytetrack for the classic baseline
+track_high_thresh: 0.5 # (float) 一阶匹配阈值；提高以过滤低置信度检测，减少无关人士（默认0.25→0.5）
+track_low_thresh: 0.2 # (float) 二阶匹配阈值；适当提高以减少误检（默认0.1→0.2）
+new_track_thresh: 0.5 # (float) 创建新轨迹的阈值；提高以减少新ID产生（默认0.25→0.5）
+track_buffer: 20 # (int) 保留丢失轨迹的帧数；减少可更快删除离开的人（默认30→20）
+match_thresh: 0.8 # (float) 关联相似度阈值（IoU/cost）
+fuse_score: True # (bool) 融合检测分数与运动/IoU进行匹配
+
+
+# tracker_type: bytetrack # (str) Tracker backend: botsort|bytetrack; choose bytetrack for the classic baseline
+# track_high_thresh: 0.25 # (float) First-stage match threshold; raise for cleaner tracks, lower to keep more
+# track_low_thresh: 0.1 # (float) Second-stage threshold for low-score matches; balances recovery vs drift
+# new_track_thresh: 0.25 # (float) Start a new track if no match ≥ this; higher reduces false tracks
+# track_buffer: 30 # (int) Frames to keep lost tracks alive; higher handles occlusion, increases ID switches risk
+# match_thresh: 0.8 # (float) Association similarity threshold (IoU/cost); tune with detector quality
+# fuse_score: True # (bool) Fuse detection score with motion/IoU for matching; stabilizes weak detections

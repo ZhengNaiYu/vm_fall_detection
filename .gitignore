@@ -15,6 +15,10 @@ models/*.weights
 # 排除数据文件夹
 data/videos/
 data/processed/
+data/action_videos/
+data/test_videos/
+data/source_images3/
+data/fall_videos/
 dataset/
 images/
 videos/

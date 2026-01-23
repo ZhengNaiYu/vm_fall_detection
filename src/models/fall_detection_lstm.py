@@ -15,8 +15,8 @@ class FallDetectionLSTM(nn.Module):
             dropout=dropout_prob if num_layers > 1 else 0
         )
         
-        # BatchNorm
-        self.bn = nn.BatchNorm1d(hidden_size)
+        # Normalization (works with batch size 1)
+        self.bn = nn.LayerNorm(hidden_size)
         
         # MLP
         self.fc1 = nn.Linear(hidden_size, hidden_size // 2)

@@ -10,8 +10,8 @@ class FallDetectionGRU(nn.Module):
         # Capa GRU (en vez de LSTM)
         self.gru = nn.GRU(input_size, hidden_size, num_layers, batch_first=True, dropout=dropout_prob if num_layers > 1 else 0)
         
-        # Batch Normalization
-        self.bn = nn.BatchNorm1d(hidden_size)
+        # Normalization (works with batch size 1)
+        self.bn = nn.LayerNorm(hidden_size)
         
         # Capas fully connected adicionales
         self.fc1 = nn.Linear(hidden_size, hidden_size // 2)

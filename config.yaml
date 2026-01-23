@@ -1,21 +1,44 @@
-train_fall_detection:
+train_pose_detection:
   # experiment parameters
   name: "fall_detection"
-  fps: 30  # IMPORTEMNT: Frame per second for video processing              
-  num_classes: 3 # IMPORTEMNT: Number of classes (2 or 3)
+  fps: 10  # IMPORTEMNT: Frame per second for video processing              
+  num_classes: 9 # IMPORTEMNT: Number of classes
+
   # training parameters
-  batch_size: 8 # batch size
+  batch_size: 64 # batch size
   learning_rate: 0.0005 # learning rate
   weight_decay: 1e-6 # weight decay
   num_epochs: 300 # maximum number of epochs
-  patience: 15 # early stopping patience
+  patience: 20 # early stopping patience
+
   # model parameters
-  type: "LSTM"    # options: LSTM, GRU...
-  input_size: 34
-  hidden_size: 64
+  type: "ImprovedLSTM"        # options: LSTM, GRU, ImprovedLSTM, Transformer
+  input_size: 68
+  hidden_size: 128            # 从64提高到128，增强模型容量
   num_layers: 2
-  dropout_prob: 0.6
+  dropout_prob: 0.4           # 从0.6降到0.4，减少过拟合
+  nhead: 4                    # 注意力头数
   checkpoint: null
+  # learning rate scheduler (optional, uncomment to use)
+  use_scheduler: true
+  scheduler_type: "cosine"    # options: cosine, step, plateau
+  # OneCycleLR parameters (when scheduler_type=onecycle)
+  max_lr: 0.003
+  pct_start: 0.3
+
+  # ===== 数据增强参数 =====
+  use_augmentation: true      # 是否使用数据增强
+  aug_noise_std: 0.01         # 高斯噪声标准差
+  aug_time_stretch: 0.1       # 时间拉伸比例（±10%）
+  
+  # ===== 损失函数优化 =====
+  use_focal_loss: false       # 是否使用Focal Loss（处理类别不平衡）
+  focal_alpha: 0.25
+  focal_gamma: 2.0
+  
+  use_label_smoothing: true   # 是否使用标签平滑
+  label_smoothing: 0.1
+
   # dataset parameters
   root_dir: "./data/processed/"
   keypoints_template: "keypoints_sequences_cls{cls}_fps{fps}.npy"
@@ -23,50 +46,76 @@ train_fall_detection:
   test_size: 0.2
   val_ratio: 0.5
   random_state: 42
+
   # output parameters
   results_dir: "results/"
   model_dir: "models/"
-  model_name_template: "lstm_cls{cls}_fps{fps}.pth"
+  model_name_template: "classify_cls{cls}_fps{fps}.pth"
   history_plot_template: "train_hist_cls{cls}_fps{fps}.png"
 
 
 yolo_pose_inference:
-  fps: 30  # IMPORTEMNT: Frame per second for video processing              
-  num_classes: 3 # IMPORTEMNT: Number of classes (2 or 3)
-  yolo_model_path: "models/yolo11x-pose.pt"
-  sequence_length: 35     # IMPORTEMNT: Number of frames per sequence
-  n_neighbors: 2          # KNN imputer
-  normalize: true
-  video_folders:
-    "data/videos/falls": 0
-    "data/videos/normal": 1
-    "data/videos/no_fall_static": 2
+  # YOLO pose keypoint extraction configuration
+  # Video directory structure: video_dir/class_name/*.mp4
+  yolo_model_path: "models/yolo11n-pose.pt"
+  video_dir: "./data/action_videos"
+  output_dir: "./data/processed"
+  sequence_length: 30     # Number of frames per sequence (longer helps slow actions)
+  n_neighbors: 5          # KNN imputer neighbors
+  normalize: true         # Whether to normalize features (xy/vel only)
+  feature_mode: "rel_xy_vel"  # raw_xy|rel_xy|xyc|rel_xyc|rel_xy_vel|rel_xyc_vel
+  # Overlap sampling for sliding windows during extraction/training
+  overlap_ratio: 0.5          # 0.0-0.9, e.g., 0.5 (50%), 0.75 (75%)
+  auto_detect_fps: true   # Auto-detect FPS from videos (set false to use fixed fps below)
+  fps: 30                 # Fixed FPS (used only when auto_detect_fps is false)
   save_keypoints: "./data/processed/keypoints_sequences_cls{cls}_fps{fps}.npy"
   save_labels: "./data/processed/labels_cls{cls}_fps{fps}.npy"
-
-
-track_fall_inference:
-  video_in: "/mnt/2/leo/fall_detection/data/test_videos/recorded_video_20260115_111419_30fps.mp4" # Input video path
-  video_out: "./output_fall_detected.mp4" # Output video path
-  window: 15 # Number of frames per sequence for inference`
-  use_lstm: true # Whether to use LSTM for fall detection, or only physics-based method
-  yolo_model_path: "models/yolo11x-pose.pt" # Path to YOLO pose estimation model
-  tracker_config: "bytetrack.yaml" # Path to ByteTrack config file
-  lstm_model_path: "models/lstm_cls3_fps30.pth" # Path to trained LSTM model
-  physics_threshold: 0.2 # Threshold for physics-based fall detection
-  physics_frames: 15 # Number of frames to consider for physics-based fall detection
-  center_y_threshold: 0.7 # Threshold for center point y-coordinate rise ratio
-  conf: 0.4 # YOLO confidence threshold
-  # LSTM model parameters
-  input_size: 34
-  hidden_size: 64
-  num_layers: 2
-  num_classes: 3
   # Class names mapping
+  num_classes: 9
   class_names:
-    0: "Fall"
-    1: "Normal"
-    2: "Static"
+    0: "Jump"
+    1: "Kick"
+    2: "Punch"
+    3: "Run"
+    4: "Sit"
+    5: "Squat"
+    6: "Stand"
+    7: "Walk"
+    8: "Wave"
+
+
+track_pose_inference:
+  video_in: "/mnt/2/leo/fall_detection/data/action_videos/kick/kick_0009_03-02-12-36-05-185_00237-00245.mp4" # Input video path
+  video_out: "./output_pose_detected.mp4" # Output video path
+  window: 30 # Number of frames per sequence for inference
+  use_lstm: true # Whether to use LSTM for pose action detection
+  yolo_model_path: "models/yolo11n-pose.pt" # Path to YOLO pose estimation model
+  tracker_config: "./bytetrack.yaml" # Path to ByteTrack config file
+  lstm_model_path: "models/classify_cls9_fps10.pth" # Path to trained LSTM model (9 classes)
+  physics_threshold: 0.2 # Threshold for physics-based fall detection
+  physics_frames: 30 # Number of frames to consider for physics-based fall detection
+  center_y_threshold: 0.7 # Threshold for center point y-coordinate rise ratio
+  conf: 0.6 # YOLO confidence threshold（提高到0.6以过滤低置信度检测，减少无关人士）
+  min_box_area: 5000 # 最小检测框面积（像素²），过滤远处小人物，0表示不过滤
+  # LSTM model parameters (should match training config)
+  model_type: "ImprovedLSTM"
+  input_size: 68
+  hidden_size: 128
+  num_layers: 2
+  num_classes: 9
+  dropout_prob: 0.4
+  sequence_length: 30 # Match the training sequence length
+  # Class names mapping (9 classes)
+  class_names:
+    0: "Jump"
+    1: "Kick"
+    2: "Punch"
+    3: "Run"
+    4: "Sit"
+    5: "Squat"
+    6: "Stand"
+    7: "Walk"
+    8: "Wave"
 
 
 export_onnx:

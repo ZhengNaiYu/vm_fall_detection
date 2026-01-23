@@ -43,8 +43,9 @@ def evaluate_model(model, test_loader, num_classes=3, device=None):
                 predicted = torch.argmax(outputs, dim=1)
 
             test_loss += loss.item()
-            all_preds.extend(predicted.cpu().numpy())
-            all_labels.extend(batch_y.squeeze().cpu().numpy())
+            # Robust to batch_size=1 (avoid 0-d arrays)
+            all_preds.extend(predicted.view(-1).cpu().tolist())
+            all_labels.extend(batch_y.view(-1).cpu().tolist())
 
     avg_test_loss = test_loss / len(test_loader)
 

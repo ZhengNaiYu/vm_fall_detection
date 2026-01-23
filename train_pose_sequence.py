@@ -6,7 +6,7 @@ import argparse
 from torch.utils.data import DataLoader, TensorDataset
 from sklearn.model_selection import train_test_split
 
-from src.models import FallDetectionGRU, FallDetectionLSTM
+from src.models import FallDetectionGRU, FallDetectionLSTM, ImprovedLSTM, TransformerEncoder
 from src.training import train_model, plot_training_history
 from src.evaluation import evaluate_model
 
@@ -79,6 +79,12 @@ def build_model(cfg):
         return FallDetectionLSTM(**params)
     elif model_type == "GRU":
         return FallDetectionGRU(**params)
+    elif model_type == "ImprovedLSTM":
+        return ImprovedLSTM(**params)
+    elif model_type == "Transformer":
+        # Transformer需要额外的nhead参数
+        params['nhead'] = cfg.get('nhead', 4)
+        return TransformerEncoder(**params)
     else:
         raise ValueError(f"Unknown model type: {model_type}")
 
@@ -95,7 +101,7 @@ def main():
     args = parser.parse_args()
 
     cfg = load_config(args.config)
-    train_cfg = cfg["train_fall_detection"]
+    train_cfg = cfg["train_pose_detection"]
     device = get_device()
     print(f"Using device: {device}")
 
