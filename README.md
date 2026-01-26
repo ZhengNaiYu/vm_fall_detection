@@ -1,23 +1,26 @@
 
-# Fall Detection Pipeline
+# Activity Detection Pipeline
 
-本项目基于 YOLO Pose 提取人体关键点，并使用 LSTM/GRU 对时序关键点进行跌倒检测。所有参数集中在 `config.yaml`。
+基于 YOLO Pose 提取关键点，使用 LSTM/GRU/BiLSTM+Attention/Transformer 对时序关键点做动作分类（含跌倒）。核心参数集中在 `config.yaml`。
 
-## 目录结构
+## 目录结构（简要）
 
 ```
 ├── config.yaml
-├── yolo_inference.py          # 关键点提取与预处理
-├── train_fall_detection.py    # 训练 LSTM/GRU 模型
-├── track_fall_inference.py    # 视频跟踪与跌倒检测
-├── export_onnx.py             # 导出 ONNX
-├── models/                    # 权重文件
+├── yolo_pose_inference.py      # 提取关键点序列并保存 npy
+├── train_pose_sequence.py      # 训练分类模型（LSTM/GRU/BiLSTMAttention/Transformer）
+├── track_pose_inference.py     # 视频推理+跟踪+分类
+├── export_onnx.py              # 导出分类/YOLO ONNX
+├── models/                     # 权重与导出的 ONNX
 ├── data/
-│   ├── videos/                # 原始视频
-│   └── processed/             # 处理后的 .npy
+│   ├── action_videos/          # 原始动作视频（按类别子目录）
+│   ├── fall_videos/            # 跌倒/正常/静止
+│   └── processed/              # 关键点与标签 npy
+├── sdk/                        # C++ SDK（activity_detection 可执行）
 └── src/
-    └── utils/
-        └── extract_keypoints_from_video.py
+    ├── models/                 # LSTM/GRU/BiLSTM_Attention/Transformer 定义
+    ├── training/               # 训练管线
+    └── utils/                  # 预处理、可视化等
 ```
 
 ## 环境搭建
@@ -38,19 +41,11 @@ pip install -r requirements.txt
 
 ## 配置文件（config.yaml）
 
-当前包含四个模块化配置块：
-
-- `train_fall_detection`：训练相关（包含实验、模型、数据集与输出路径参数）
-- `yolo_pose_inference`：关键点提取与预处理（YOLO 模型、序列长度、归一化、保存路径等）
-- `track_fall_inference`：视频推理（输入/输出视频、窗口大小、是否用 LSTM、阈值等）
-- `export_onnx`：ONNX 导出（模型结构、序列长度、checkpoint、opset、输出路径）
-
-示例关键路径模板（与当前配置一致）：
-
-- 数据集输出：`data/processed/keypoints_sequences_cls{cls}_fps{fps}.npy`
-- 标签输出：`data/processed/labels_cls{cls}_fps{fps}.npy`
-- 模型保存：`models/lstm_cls{cls}_fps{fps}.pth`
-- 训练曲线：`results/train_hist_cls{cls}_fps{fps}.png`
+主要配置块：
+- `train_pose_detection`：训练参数（模型类型、隐藏维度、序列长度、增强、LR 计划、输出路径模板等）。
+- `yolo_pose_inference`：关键点提取（YOLO 路径、序列长度、特征模式 `rel_xy_vel`、FPS/重叠采样、保存路径）。
+- `track_pose_inference`：Python 推理（输入/输出视频、YOLO 阈值、`min_box_area` 过滤小目标、模型路径/类型、类名、序列长度等）。
+- `export_onnx`：导出分类或 YOLO ONNX（模型结构、checkpoint、输出路径、opset、序列长度）。
 
 ## 数据准备
 
@@ -69,7 +64,7 @@ data/videos/
 
 2) 视频帧率处理（可选）
 
-如需统一帧率，可使用 `src/utils/reduce_video_fps.py` 对视频进行重采样。
+如需统一帧率，可使用 `src/utils/reduce_video_fps.py` 对视频进行重采样；或在 `yolo_pose_inference` 中开启 `auto_detect_fps`。
 
 3) 下载 YOLO Pose 模型
 
@@ -77,31 +72,29 @@ data/videos/
 
 ## 使用方法
 
-1) 关键点提取与预处理
+1) 关键点提取
 
 ```bash
-python yolo_inference.py --config config.yaml
+python yolo_pose_inference.py --config config.yaml
 ```
 
-输出位于 `data/processed/`，文件名根据 `fps` 与 `num_classes` 模板生成。
+输出：`data/processed/keypoints_sequences_cls{cls}_fps{fps}.npy` 与对应标签。
 
-2) 训练模型
+2) 训练分类模型
 
 ```bash
-python train_fall_detection.py --config config.yaml
+python train_pose_sequence.py --config config.yaml
 ```
 
-读取 `train_fall_detection` 配置，训练完成后保存模型与训练曲线。
+模型与曲线：`models/classify_cls{cls}_fps{fps}.pth`，`results/train_hist_cls{cls}_fps{fps}.png`。
 
-3) 视频推理（跟踪 + 跌倒检测）
+3) 视频推理（Python）
 
 ```bash
-python track_fall_inference.py --config config.yaml
+python track_pose_inference.py --config config.yaml
 ```
 
-读取 `track_fall_inference` 配置，生成带标注的视频输出。注意：可通过设置use_lstm参数选择是否加载之前训练好的LSTM检测模型，也可直接基于物理规则判断是否跌倒。
-
-
+可配置 YOLO 阈值、`min_box_area`（过滤远处小人）、模型类型与路径，生成带分类与跟踪 ID 的视频。
 
 4) 导出 ONNX
 
@@ -111,20 +104,21 @@ python export_onnx.py --config config.yaml
 python export_onnx.py --config config.yaml --checkpoint models/xxx.pth --output models/xxx.onnx
 ```
 
-读取 `export_onnx` 配置，按设定的输入序列长度与 opset 导出。
+支持导出分类模型或 YOLO ONNX，依据配置选择。
 
-## C++ SDK 使用方法
+## C++ SDK（sdk/）
 
-编译好的 SDK 位于 `sdk/` 目录。
+- 可执行：`activity_detection`
+- 库：`libactivity_detection_sdk.so`
 
 ### 快速开始
 
 ```bash
 cd sdk
-./run_inference.sh
+./run_inference.sh <input_video> <output_video>
 ```
 
-该脚本自动编译（如需要）并运行推理，输出带标注视频到 `output_fall_detected_cpp.mp4`。
+脚本会编译（如需要）并运行，读取 `config.json`。
 
 ### 手动编译
 
@@ -135,41 +129,38 @@ cmake -B build -S .
 cmake --build build -j$(nproc)
 ```
 
-编译产物：
-- `build/fall_detection` - 可执行程序
-- `build/libfall_detection_sdk.so` - 动态链接库
-
 ### 处理视频/图片
 
 ```bash
 cd sdk/build
-./fall_detection --config_file ../config.json \
-                 --input <video_or_image> \
-                 --output <output_path>
+./activity_detection --config_file ../config.json \
+                                         --input <video_or_image> \
+                                         --output <output_path>
 ```
 
-支持格式：`.mp4 .avi .mov .mkv .wmv .jpg .jpeg .png`
+支持：`.mp4 .avi .mov .mkv .wmv .jpg .jpeg .png`
 
-### 配置文件（config.json）
-
-关键参数：
+### config.json 关键参数（示例）
 
 ```json
 {
     "models": {
         "pose_model_path": "../../models/yolo11n-pose.onnx",
-        "fall_detection_model_path": "../../models/lstm_cls3_fps5.onnx"
+        "activity_detection_model_path": "../../models/classify_cls9_fps10.onnx"
+    },
+    "activity_detection": {
+        "num_classes": 9,
+        "class_names": ["Jump","Kick","Punch","Run","Sit","Squat","Stand","Walk","Wave"],
+        "sequence_length": 10,
+        "confidence_threshold": 0.7
     },
     "detection": {
-        "conf_threshold": 0.2,    // 姿态检测阈值（低=多人，高=精准）
-        "nms_threshold": 0.25     // NMS去重叠阈值
-    },
-    "fall_detection": {
-        "confidence_threshold": 0.7,  // 跌倒分类阈值
-        "sequence_length": 35         // 序列长度（帧数）
+        "conf_threshold": 0.2,
+        "nms_threshold": 0.25,
+        "min_box_area": 5000  // 过滤远处小人物；0 表示不过滤
     },
     "device": {
-        "device_id": -1               // -1=CPU, ≥0=GPU设备ID
+        "device_id": -1
     }
 }
 ```
@@ -178,16 +169,15 @@ cd sdk/build
 
 | 模块 | 功能 | 输出 |
 |------|------|------|
-| PoseInferencer | YOLO11 姿态检测 | 人体边界框 + 17个关键点 |
-| SimpleByteTracker | 多目标跟踪 | 为每人分配持久化ID |
-| FallDetector | LSTM跌倒分类 | 3类概率（Fall/Normal/Static） |
+| PoseInferencer | YOLO11 姿态检测 | 边界框 + 17 关键点 |
+| SimpleByteTracker | 多目标跟踪 | 持久化 ID |
+| ActivityDetector | 时序分类（LSTM/GRU/BiLSTMAttention/Transformer） | 多类别概率与标签 |
 
-### 调试技巧
+### 调试提示
 
-- **检测人数过多**：降低 `conf_threshold`
-- **重叠框过多**：提高 `nms_threshold`
-- **前N帧无跌倒分类**：正常，缓冲35帧数据后开始分类
-- **查看库调用**：库接口定义在 `include/vmsdk.h`
+- 人太多/误检：提高 `conf_threshold`，或调大 `min_box_area`。
+- 框重叠：提高 `nms_threshold`。
+- 分类延迟：序列长度需填满（如 sequence_length=10，需要 10 帧后才输出分类）。
 
 ## 备注
 

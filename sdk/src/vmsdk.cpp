@@ -1,6 +1,6 @@
 #include "vmsdk.h"
 #include "pose_inferencer.h"
-#include "fall_detector.h"
+#include "activity_detector.h"
 #include "config_loader.h"
 #include "tracker.h"
 #include <opencv2/opencv.hpp>
@@ -16,19 +16,19 @@ namespace visionmatrixsdk
     {
         struct FallDetectionModel {
             PoseInferencer* pose_detector;
-            FallDetector* fall_detector;
+            ActivityDetector* activity_detector;
             SimpleByteTracker* tracker;
             std::unique_ptr<Config> config;
             
-            FallDetectionModel() : pose_detector(nullptr), fall_detector(nullptr), tracker(nullptr) {}
+            FallDetectionModel() : pose_detector(nullptr), activity_detector(nullptr), tracker(nullptr) {}
             ~FallDetectionModel() {
                 if (pose_detector) {
                     pose_detector->deinit();
                     delete pose_detector;
                 }
-                if (fall_detector) {
-                    fall_detector->deinit();
-                    delete fall_detector;
+                if (activity_detector) {
+                    activity_detector->deinit();
+                    delete activity_detector;
                 }
                 if (tracker) {
                     delete tracker;
@@ -75,7 +75,7 @@ namespace visionmatrixsdk
                 oss << version(1) << "." << version(2) << "." << version(3);
                 return oss.str();
             case 2:
-                return "Fall Detection SDK";
+                return "Activity Detection SDK";
             case 3:
                 return "Vision Matrix Technology";
             default:
@@ -117,10 +117,10 @@ namespace visionmatrixsdk
                 return nullptr;
             }
 
-            // Initialize fall detector
-            model->fall_detector = new FallDetector();
-            if (!model->fall_detector->init(*model->config)) {
-                std::cerr << "Error: Failed to initialize fall detector" << std::endl;
+            // Initialize activity detector
+            model->activity_detector = new ActivityDetector();
+            if (!model->activity_detector->init(*model->config)) {
+                std::cerr << "Error: Failed to initialize activity detector" << std::endl;
                 delete model;
                 return nullptr;
             }
@@ -128,7 +128,7 @@ namespace visionmatrixsdk
             // Initialize tracker
             model->tracker = new SimpleByteTracker();
 
-            std::cout << "Fall detection SDK initialized successfully" << std::endl;
+            std::cout << "Activity detection SDK initialized successfully" << std::endl;
             return model;
         }
 
@@ -154,10 +154,17 @@ namespace visionmatrixsdk
 
             auto* fd_model = static_cast<FallDetectionModel*>(model);
             
-            cv::VideoCapture cap(video_path);
-            if (!cap.isOpened()) {
-                std::cerr << "Error: Cannot open video file: " << video_path << std::endl;
-                return -1;
+            cv::VideoCapture cap;
+            if (!cap.open(video_path)) {
+                // Fallback: force FFMPEG backend
+                if (!cap.open(video_path, cv::CAP_FFMPEG)) {
+                    std::cerr << "Error: Cannot open video file: " << video_path << std::endl;
+                    std::cerr << "Hint: Ensure the path is correct relative to sdk/build and try disabling hardware decode.\n"
+                              << "      Current OPENCV_FFMPEG_CAPTURE_OPTIONS: "
+                              << (getenv("OPENCV_FFMPEG_CAPTURE_OPTIONS") ? getenv("OPENCV_FFMPEG_CAPTURE_OPTIONS") : "(unset)")
+                              << std::endl;
+                    return -1;
+                }
             }
 
             int frame_width = static_cast<int>(cap.get(cv::CAP_PROP_FRAME_WIDTH));
@@ -183,8 +190,8 @@ namespace visionmatrixsdk
             int frame_count = 0;
             auto start_time = std::chrono::high_resolution_clock::now();
 
-            // Reset fall detector buffer and tracker
-            fd_model->fall_detector->reset();
+            // Reset activity detector buffer and tracker
+            fd_model->activity_detector->reset();
             if (fd_model->tracker) fd_model->tracker->reset();
 
             while (cap.read(frame)) {
@@ -199,8 +206,8 @@ namespace visionmatrixsdk
                 }
 
                 for (auto& detection : detections) {
-                    // Run fall detection on keypoints (per track buffer)
-                    fd_model->fall_detector->predict(detection);
+                    // Run activity detection on keypoints (per track buffer)
+                    fd_model->activity_detector->predict(detection);
                     
                     // Draw results
                     drawPoseKeypoints(frame, detection.keypoints);
@@ -267,8 +274,8 @@ namespace visionmatrixsdk
 
             // Process each detection
             for (auto& detection : detections) {
-                // Run fall detection
-                fd_model->fall_detector->predict(detection);
+                // Run activity detection
+                fd_model->activity_detector->predict(detection);
                 
                 // Draw results
                 drawPoseKeypoints(frame, detection.keypoints);
@@ -345,7 +352,8 @@ namespace visionmatrixsdk
             // Draw fall detection result
             if (detection.fall_class >= 0) {
                 std::ostringstream label;
-                label << detection.fall_name << " " 
+                label << "ID " << detection.id << " | "
+                     << detection.fall_name << " " 
                      << std::fixed << std::setprecision(2) 
                      << (detection.fall_confidence * 100) << "%";
                 
@@ -360,6 +368,20 @@ namespace visionmatrixsdk
                             box_color, -1);
                 
                 // Draw label text
+                cv::putText(frame, label.str(),
+                           cv::Point(detection.x1, detection.y1 - 5),
+                           cv::FONT_HERSHEY_SIMPLEX, 0.6, cv::Scalar(255, 255, 255), 2);
+            } else {
+                // Still show ID even when buffering/unknown
+                std::ostringstream label;
+                label << "ID " << detection.id << " | " << detection.fall_name;
+                int baseline = 0;
+                cv::Size label_size = cv::getTextSize(label.str(), cv::FONT_HERSHEY_SIMPLEX, 
+                                                      0.6, 2, &baseline);
+                cv::rectangle(frame,
+                             cv::Point(detection.x1, detection.y1 - label_size.height - 10),
+                             cv::Point(detection.x1 + label_size.width, detection.y1),
+                             box_color, -1);
                 cv::putText(frame, label.str(),
                            cv::Point(detection.x1, detection.y1 - 5),
                            cv::FONT_HERSHEY_SIMPLEX, 0.6, cv::Scalar(255, 255, 255), 2);

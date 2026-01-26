@@ -145,7 +145,7 @@ CMAKE_PROJECT_DESCRIPTION:STATIC=
 CMAKE_PROJECT_HOMEPAGE_URL:STATIC=
 
 //Value Computed by CMake
-CMAKE_PROJECT_NAME:STATIC=fall_detection_sdk
+CMAKE_PROJECT_NAME:STATIC=activity_detection_sdk
 
 //Path to a program.
 CMAKE_RANLIB:FILEPATH=/usr/bin/ranlib
@@ -219,16 +219,16 @@ PKG_CONFIG_ARGN:STRING=
 PKG_CONFIG_EXECUTABLE:FILEPATH=/usr/bin/pkg-config
 
 //Value Computed by CMake
-fall_detection_sdk_BINARY_DIR:STATIC=/mnt/2/leo/fall_detection/sdk/build
+activity_detection_sdk_BINARY_DIR:STATIC=/mnt/2/leo/fall_detection/sdk/build
 
 //Value Computed by CMake
-fall_detection_sdk_IS_TOP_LEVEL:STATIC=ON
+activity_detection_sdk_IS_TOP_LEVEL:STATIC=ON
 
 //Dependencies for the target
-fall_detection_sdk_LIB_DEPENDS:STATIC=general;opencv_calib3d;general;opencv_core;general;opencv_dnn;general;opencv_features2d;general;opencv_flann;general;opencv_gapi;general;opencv_highgui;general;opencv_imgcodecs;general;opencv_imgproc;general;opencv_ml;general;opencv_objdetect;general;opencv_photo;general;opencv_stitching;general;opencv_video;general;opencv_videoio;general;/mnt/2/leo/fall_detection/sdk/onnxruntime-linux-x64-1.16.3/lib/libonnxruntime.so;
+activity_detection_sdk_LIB_DEPENDS:STATIC=general;opencv_calib3d;general;opencv_core;general;opencv_dnn;general;opencv_features2d;general;opencv_flann;general;opencv_gapi;general;opencv_highgui;general;opencv_imgcodecs;general;opencv_imgproc;general;opencv_ml;general;opencv_objdetect;general;opencv_photo;general;opencv_stitching;general;opencv_video;general;opencv_videoio;general;/mnt/2/leo/fall_detection/sdk/onnxruntime-linux-x64-1.16.3/lib/libonnxruntime.so;
 
 //Value Computed by CMake
-fall_detection_sdk_SOURCE_DIR:STATIC=/mnt/2/leo/fall_detection/sdk
+activity_detection_sdk_SOURCE_DIR:STATIC=/mnt/2/leo/fall_detection/sdk
 
 
 ########################

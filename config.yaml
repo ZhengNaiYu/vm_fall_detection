@@ -12,7 +12,7 @@ train_pose_detection:
   patience: 20 # early stopping patience
 
   # model parameters
-  type: "ImprovedLSTM"        # options: LSTM, GRU, ImprovedLSTM, Transformer
+  type: "BiLSTMAttention"     # options: LSTM, GRU, BiLSTMAttention, Transformer (or old names: ImprovedLSTM)
   input_size: 68
   hidden_size: 128            # 从64提高到128，增强模型容量
   num_layers: 2
@@ -98,7 +98,7 @@ track_pose_inference:
   conf: 0.6 # YOLO confidence threshold（提高到0.6以过滤低置信度检测，减少无关人士）
   min_box_area: 5000 # 最小检测框面积（像素²），过滤远处小人物，0表示不过滤
   # LSTM model parameters (should match training config)
-  model_type: "ImprovedLSTM"
+  model_type: "BiLSTMAttention"  # LSTM, GRU, BiLSTMAttention, Transformer
   input_size: 68
   hidden_size: 128
   num_layers: 2
@@ -119,15 +119,24 @@ track_pose_inference:
 
 
 export_onnx:
-  # Model parameters
-  type: "LSTM"                    # options: LSTM, GRU
-  input_size: 34
-  hidden_size: 64
+  # ===== 分类模型导出配置 =====
+  # 模型类型
+  type: "BiLSTMAttention"          # options: LSTM, GRU, BiLSTMAttention, Transformer
+  
+  # 模型参数（必须与训练配置匹配）
+  input_size: 68
+  hidden_size: 128
   num_layers: 2
-  dropout_prob: 0.6
-  num_classes: 3
-  sequence_length: 35             # For dummy input
-  # Export settings
-  checkpoint: "models/lstm_cls3_fps30.pth"
-  output: "models/lstm_cls3_fps30.onnx"
-  opset_version: 17
+  dropout_prob: 0.4
+  num_classes: 9
+  nhead: 4                         # Transformer 专用参数
+  sequence_length: 30              # 虚拟输入的序列长度
+  
+  # 导出设置
+  checkpoint: "models/classify_cls9_fps10.pth"    # 训练好的模型路径
+  output: "models/classify_cls9_fps10.onnx"       # 输出 ONNX 文件路径
+  opset_version: 17                # ONNX opset 版本
+
+  # ===== YOLO 模型导出配置 =====
+  yolo_model_path: "models/yolo11n-pose.pt"            # YOLO 模型路径
+  yolo_output_onnx: "models/yolo11n-pose.onnx"              # 导出的 ONNX 文件路径

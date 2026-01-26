@@ -162,38 +162,65 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named fall_detection_sdk
+# Target rules for targets named activity_detection_sdk
 
 # Build rule for target.
-fall_detection_sdk: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 fall_detection_sdk
-.PHONY : fall_detection_sdk
+activity_detection_sdk: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 activity_detection_sdk
+.PHONY : activity_detection_sdk
 
 # fast build rule for target.
-fall_detection_sdk/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fall_detection_sdk.dir/build.make CMakeFiles/fall_detection_sdk.dir/build
-.PHONY : fall_detection_sdk/fast
+activity_detection_sdk/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/activity_detection_sdk.dir/build.make CMakeFiles/activity_detection_sdk.dir/build
+.PHONY : activity_detection_sdk/fast
 
 #=============================================================================
-# Target rules for targets named fall_detection
+# Target rules for targets named activity_detection
 
 # Build rule for target.
-fall_detection: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 fall_detection
-.PHONY : fall_detection
+activity_detection: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 activity_detection
+.PHONY : activity_detection
 
 # fast build rule for target.
-fall_detection/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fall_detection.dir/build.make CMakeFiles/fall_detection.dir/build
-.PHONY : fall_detection/fast
+activity_detection/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/activity_detection.dir/build.make CMakeFiles/activity_detection.dir/build
+.PHONY : activity_detection/fast
+
+src/activity_detector.o: src/activity_detector.cpp.o
+.PHONY : src/activity_detector.o
+
+# target to build an object file
+src/activity_detector.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/activity_detection_sdk.dir/build.make CMakeFiles/activity_detection_sdk.dir/src/activity_detector.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/activity_detection.dir/build.make CMakeFiles/activity_detection.dir/src/activity_detector.cpp.o
+.PHONY : src/activity_detector.cpp.o
+
+src/activity_detector.i: src/activity_detector.cpp.i
+.PHONY : src/activity_detector.i
+
+# target to preprocess a source file
+src/activity_detector.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/activity_detection_sdk.dir/build.make CMakeFiles/activity_detection_sdk.dir/src/activity_detector.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/activity_detection.dir/build.make CMakeFiles/activity_detection.dir/src/activity_detector.cpp.i
+.PHONY : src/activity_detector.cpp.i
+
+src/activity_detector.s: src/activity_detector.cpp.s
+.PHONY : src/activity_detector.s
+
+# target to generate assembly for a file
+src/activity_detector.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/activity_detection_sdk.dir/build.make CMakeFiles/activity_detection_sdk.dir/src/activity_detector.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/activity_detection.dir/build.make CMakeFiles/activity_detection.dir/src/activity_detector.cpp.s
+.PHONY : src/activity_detector.cpp.s
 
 src/config_loader.o: src/config_loader.cpp.o
 .PHONY : src/config_loader.o
 
 # target to build an object file
 src/config_loader.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fall_detection_sdk.dir/build.make CMakeFiles/fall_detection_sdk.dir/src/config_loader.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fall_detection.dir/build.make CMakeFiles/fall_detection.dir/src/config_loader.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/activity_detection_sdk.dir/build.make CMakeFiles/activity_detection_sdk.dir/src/config_loader.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/activity_detection.dir/build.make CMakeFiles/activity_detection.dir/src/config_loader.cpp.o
 .PHONY : src/config_loader.cpp.o
 
 src/config_loader.i: src/config_loader.cpp.i
@@ -201,8 +228,8 @@ src/config_loader.i: src/config_loader.cpp.i
 
 # target to preprocess a source file
 src/config_loader.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fall_detection_sdk.dir/build.make CMakeFiles/fall_detection_sdk.dir/src/config_loader.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fall_detection.dir/build.make CMakeFiles/fall_detection.dir/src/config_loader.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/activity_detection_sdk.dir/build.make CMakeFiles/activity_detection_sdk.dir/src/config_loader.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/activity_detection.dir/build.make CMakeFiles/activity_detection.dir/src/config_loader.cpp.i
 .PHONY : src/config_loader.cpp.i
 
 src/config_loader.s: src/config_loader.cpp.s
@@ -210,43 +237,16 @@ src/config_loader.s: src/config_loader.cpp.s
 
 # target to generate assembly for a file
 src/config_loader.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fall_detection_sdk.dir/build.make CMakeFiles/fall_detection_sdk.dir/src/config_loader.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fall_detection.dir/build.make CMakeFiles/fall_detection.dir/src/config_loader.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/activity_detection_sdk.dir/build.make CMakeFiles/activity_detection_sdk.dir/src/config_loader.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/activity_detection.dir/build.make CMakeFiles/activity_detection.dir/src/config_loader.cpp.s
 .PHONY : src/config_loader.cpp.s
-
-src/fall_detector.o: src/fall_detector.cpp.o
-.PHONY : src/fall_detector.o
-
-# target to build an object file
-src/fall_detector.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fall_detection_sdk.dir/build.make CMakeFiles/fall_detection_sdk.dir/src/fall_detector.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fall_detection.dir/build.make CMakeFiles/fall_detection.dir/src/fall_detector.cpp.o
-.PHONY : src/fall_detector.cpp.o
-
-src/fall_detector.i: src/fall_detector.cpp.i
-.PHONY : src/fall_detector.i
-
-# target to preprocess a source file
-src/fall_detector.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fall_detection_sdk.dir/build.make CMakeFiles/fall_detection_sdk.dir/src/fall_detector.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fall_detection.dir/build.make CMakeFiles/fall_detection.dir/src/fall_detector.cpp.i
-.PHONY : src/fall_detector.cpp.i
-
-src/fall_detector.s: src/fall_detector.cpp.s
-.PHONY : src/fall_detector.s
-
-# target to generate assembly for a file
-src/fall_detector.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fall_detection_sdk.dir/build.make CMakeFiles/fall_detection_sdk.dir/src/fall_detector.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fall_detection.dir/build.make CMakeFiles/fall_detection.dir/src/fall_detector.cpp.s
-.PHONY : src/fall_detector.cpp.s
 
 src/main.o: src/main.cpp.o
 .PHONY : src/main.o
 
 # target to build an object file
 src/main.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fall_detection.dir/build.make CMakeFiles/fall_detection.dir/src/main.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/activity_detection.dir/build.make CMakeFiles/activity_detection.dir/src/main.cpp.o
 .PHONY : src/main.cpp.o
 
 src/main.i: src/main.cpp.i
@@ -254,7 +254,7 @@ src/main.i: src/main.cpp.i
 
 # target to preprocess a source file
 src/main.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fall_detection.dir/build.make CMakeFiles/fall_detection.dir/src/main.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/activity_detection.dir/build.make CMakeFiles/activity_detection.dir/src/main.cpp.i
 .PHONY : src/main.cpp.i
 
 src/main.s: src/main.cpp.s
@@ -262,7 +262,7 @@ src/main.s: src/main.cpp.s
 
 # target to generate assembly for a file
 src/main.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fall_detection.dir/build.make CMakeFiles/fall_detection.dir/src/main.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/activity_detection.dir/build.make CMakeFiles/activity_detection.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
 
 src/pose_inferencer.o: src/pose_inferencer.cpp.o
@@ -270,8 +270,8 @@ src/pose_inferencer.o: src/pose_inferencer.cpp.o
 
 # target to build an object file
 src/pose_inferencer.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fall_detection_sdk.dir/build.make CMakeFiles/fall_detection_sdk.dir/src/pose_inferencer.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fall_detection.dir/build.make CMakeFiles/fall_detection.dir/src/pose_inferencer.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/activity_detection_sdk.dir/build.make CMakeFiles/activity_detection_sdk.dir/src/pose_inferencer.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/activity_detection.dir/build.make CMakeFiles/activity_detection.dir/src/pose_inferencer.cpp.o
 .PHONY : src/pose_inferencer.cpp.o
 
 src/pose_inferencer.i: src/pose_inferencer.cpp.i
@@ -279,8 +279,8 @@ src/pose_inferencer.i: src/pose_inferencer.cpp.i
 
 # target to preprocess a source file
 src/pose_inferencer.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fall_detection_sdk.dir/build.make CMakeFiles/fall_detection_sdk.dir/src/pose_inferencer.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fall_detection.dir/build.make CMakeFiles/fall_detection.dir/src/pose_inferencer.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/activity_detection_sdk.dir/build.make CMakeFiles/activity_detection_sdk.dir/src/pose_inferencer.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/activity_detection.dir/build.make CMakeFiles/activity_detection.dir/src/pose_inferencer.cpp.i
 .PHONY : src/pose_inferencer.cpp.i
 
 src/pose_inferencer.s: src/pose_inferencer.cpp.s
@@ -288,8 +288,8 @@ src/pose_inferencer.s: src/pose_inferencer.cpp.s
 
 # target to generate assembly for a file
 src/pose_inferencer.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fall_detection_sdk.dir/build.make CMakeFiles/fall_detection_sdk.dir/src/pose_inferencer.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fall_detection.dir/build.make CMakeFiles/fall_detection.dir/src/pose_inferencer.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/activity_detection_sdk.dir/build.make CMakeFiles/activity_detection_sdk.dir/src/pose_inferencer.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/activity_detection.dir/build.make CMakeFiles/activity_detection.dir/src/pose_inferencer.cpp.s
 .PHONY : src/pose_inferencer.cpp.s
 
 src/tracker.o: src/tracker.cpp.o
@@ -297,8 +297,8 @@ src/tracker.o: src/tracker.cpp.o
 
 # target to build an object file
 src/tracker.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fall_detection_sdk.dir/build.make CMakeFiles/fall_detection_sdk.dir/src/tracker.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fall_detection.dir/build.make CMakeFiles/fall_detection.dir/src/tracker.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/activity_detection_sdk.dir/build.make CMakeFiles/activity_detection_sdk.dir/src/tracker.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/activity_detection.dir/build.make CMakeFiles/activity_detection.dir/src/tracker.cpp.o
 .PHONY : src/tracker.cpp.o
 
 src/tracker.i: src/tracker.cpp.i
@@ -306,8 +306,8 @@ src/tracker.i: src/tracker.cpp.i
 
 # target to preprocess a source file
 src/tracker.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fall_detection_sdk.dir/build.make CMakeFiles/fall_detection_sdk.dir/src/tracker.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fall_detection.dir/build.make CMakeFiles/fall_detection.dir/src/tracker.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/activity_detection_sdk.dir/build.make CMakeFiles/activity_detection_sdk.dir/src/tracker.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/activity_detection.dir/build.make CMakeFiles/activity_detection.dir/src/tracker.cpp.i
 .PHONY : src/tracker.cpp.i
 
 src/tracker.s: src/tracker.cpp.s
@@ -315,8 +315,8 @@ src/tracker.s: src/tracker.cpp.s
 
 # target to generate assembly for a file
 src/tracker.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fall_detection_sdk.dir/build.make CMakeFiles/fall_detection_sdk.dir/src/tracker.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fall_detection.dir/build.make CMakeFiles/fall_detection.dir/src/tracker.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/activity_detection_sdk.dir/build.make CMakeFiles/activity_detection_sdk.dir/src/tracker.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/activity_detection.dir/build.make CMakeFiles/activity_detection.dir/src/tracker.cpp.s
 .PHONY : src/tracker.cpp.s
 
 src/vmsdk.o: src/vmsdk.cpp.o
@@ -324,8 +324,8 @@ src/vmsdk.o: src/vmsdk.cpp.o
 
 # target to build an object file
 src/vmsdk.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fall_detection_sdk.dir/build.make CMakeFiles/fall_detection_sdk.dir/src/vmsdk.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fall_detection.dir/build.make CMakeFiles/fall_detection.dir/src/vmsdk.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/activity_detection_sdk.dir/build.make CMakeFiles/activity_detection_sdk.dir/src/vmsdk.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/activity_detection.dir/build.make CMakeFiles/activity_detection.dir/src/vmsdk.cpp.o
 .PHONY : src/vmsdk.cpp.o
 
 src/vmsdk.i: src/vmsdk.cpp.i
@@ -333,8 +333,8 @@ src/vmsdk.i: src/vmsdk.cpp.i
 
 # target to preprocess a source file
 src/vmsdk.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fall_detection_sdk.dir/build.make CMakeFiles/fall_detection_sdk.dir/src/vmsdk.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fall_detection.dir/build.make CMakeFiles/fall_detection.dir/src/vmsdk.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/activity_detection_sdk.dir/build.make CMakeFiles/activity_detection_sdk.dir/src/vmsdk.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/activity_detection.dir/build.make CMakeFiles/activity_detection.dir/src/vmsdk.cpp.i
 .PHONY : src/vmsdk.cpp.i
 
 src/vmsdk.s: src/vmsdk.cpp.s
@@ -342,8 +342,8 @@ src/vmsdk.s: src/vmsdk.cpp.s
 
 # target to generate assembly for a file
 src/vmsdk.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fall_detection_sdk.dir/build.make CMakeFiles/fall_detection_sdk.dir/src/vmsdk.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fall_detection.dir/build.make CMakeFiles/fall_detection.dir/src/vmsdk.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/activity_detection_sdk.dir/build.make CMakeFiles/activity_detection_sdk.dir/src/vmsdk.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/activity_detection.dir/build.make CMakeFiles/activity_detection.dir/src/vmsdk.cpp.s
 .PHONY : src/vmsdk.cpp.s
 
 # Help Target
@@ -358,14 +358,14 @@ help:
 	@echo "... install/strip"
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
-	@echo "... fall_detection"
-	@echo "... fall_detection_sdk"
+	@echo "... activity_detection"
+	@echo "... activity_detection_sdk"
+	@echo "... src/activity_detector.o"
+	@echo "... src/activity_detector.i"
+	@echo "... src/activity_detector.s"
 	@echo "... src/config_loader.o"
 	@echo "... src/config_loader.i"
 	@echo "... src/config_loader.s"
-	@echo "... src/fall_detector.o"
-	@echo "... src/fall_detector.i"
-	@echo "... src/fall_detector.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"

@@ -34,6 +34,7 @@ private:
     int input_width_;
     int input_height_;
     float nms_threshold_;
+    float min_box_area_ = 0.f;
 };
 
 #endif // POSE_INFERENCER_H

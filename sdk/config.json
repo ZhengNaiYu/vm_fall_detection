@@ -1,20 +1,21 @@
 {
     "models": {
         "pose_model_path": "../../models/yolo11n-pose.onnx",
-        "fall_detection_model_path": "../../models/lstm_cls3_fps5.onnx"
+        "activity_detection_model_path": "../../models/classify_cls9_fps10.onnx"
     },
     "device": {
         "device_id": -1
     },
-    "fall_detection": {
-        "num_classes": 3,
-        "class_names": ["Fall", "Normal", "Static"],
-        "sequence_length": 35,
+    "activity_detection": {
+        "num_classes": 9,
+        "class_names": ["Jump", "Kick", "Punch", "Run", "Sit", "Squat", "Stand", "Walk", "Wave"],
+        "sequence_length": 10,
         "confidence_threshold": 0.7
     },
     "detection": {
         "nms_threshold": 0.25,
-        "conf_threshold": 0.2
+        "conf_threshold": 0.2,
+        "min_box_area": 50000
     },
     "display": {
         "display_frequency": 1,

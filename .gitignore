@@ -17,6 +17,7 @@ data/videos/
 data/processed/
 data/action_videos/
 data/test_videos/
+data/test_videos_fps_reduced/
 data/source_images3/
 data/fall_videos/
 dataset/

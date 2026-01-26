@@ -6,7 +6,7 @@ import argparse
 from torch.utils.data import DataLoader, TensorDataset
 from sklearn.model_selection import train_test_split
 
-from src.models import FallDetectionGRU, FallDetectionLSTM, ImprovedLSTM, TransformerEncoder
+from src.models import LSTM, GRU, BiLSTMAttention, Transformer
 from src.training import train_model, plot_training_history
 from src.evaluation import evaluate_model
 
@@ -76,17 +76,18 @@ def build_model(cfg):
     )
 
     if model_type == "LSTM":
-        return FallDetectionLSTM(**params)
+        return LSTM(**params)
     elif model_type == "GRU":
-        return FallDetectionGRU(**params)
-    elif model_type == "ImprovedLSTM":
-        return ImprovedLSTM(**params)
+        return GRU(**params)
+    elif model_type == "BiLSTMAttention" or model_type == "ImprovedLSTM":
+        # Support both new and old names for backward compatibility
+        return BiLSTMAttention(**params)
     elif model_type == "Transformer":
         # Transformer需要额外的nhead参数
         params['nhead'] = cfg.get('nhead', 4)
-        return TransformerEncoder(**params)
+        return Transformer(**params)
     else:
-        raise ValueError(f"Unknown model type: {model_type}")
+        raise ValueError(f"Unknown model type: {model_type}. Options: LSTM, GRU, BiLSTMAttention, Transformer")
 
 
 # -------------------------------------------------------

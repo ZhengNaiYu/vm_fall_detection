@@ -105,7 +105,11 @@ std::unique_ptr<Config> ConfigLoader::parseJson(const std::string& json_str) {
         
         // Parse model paths
         config->pose_model_path = findValue("pose_model_path");
-        config->fall_detection_model_path = findValue("fall_detection_model_path");
+        config->activity_detection_model_path = findValue("activity_detection_model_path");
+        if (config->activity_detection_model_path.empty()) {
+            // backward compatibility
+            config->activity_detection_model_path = findValue("fall_detection_model_path");
+        }
         
         // Parse device settings
         std::string device_id_str = findValue("device_id");
@@ -113,7 +117,7 @@ std::unique_ptr<Config> ConfigLoader::parseJson(const std::string& json_str) {
             config->device_id = std::stoi(device_id_str);
         }
         
-        // Parse fall detection settings
+        // Parse activity detection settings
         std::string num_classes_str = findValue("num_classes");
         if (!num_classes_str.empty()) {
             config->num_classes = std::stoi(num_classes_str);
@@ -141,6 +145,11 @@ std::unique_ptr<Config> ConfigLoader::parseJson(const std::string& json_str) {
         if (!conf_threshold_str.empty()) {
             config->conf_threshold = std::stof(conf_threshold_str);
         }
+
+        std::string min_box_area_str = findValue("min_box_area");
+        if (!min_box_area_str.empty()) {
+            config->min_box_area = std::stof(min_box_area_str);
+        }
         
         // Parse display settings
         std::string display_frequency_str = findValue("display_frequency");
@@ -167,8 +176,8 @@ bool ConfigLoader::validateConfig(const Config& config) {
         return false;
     }
     
-    if (config.fall_detection_model_path.empty()) {
-        std::cerr << "Error: fall_detection_model_path is empty" << std::endl;
+    if (config.activity_detection_model_path.empty()) {
+        std::cerr << "Error: activity_detection_model_path is empty" << std::endl;
         return false;
     }
     

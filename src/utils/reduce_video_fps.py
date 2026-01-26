@@ -2,7 +2,7 @@ import os
 import cv2
 import numpy as np
 
-def reduce_video_fps(input_folder, output_folder, target_fps=5, overwrite=False):
+def reduce_video_fps(input_folder, output_folder, target_fps=10, overwrite=False):
     """
     Reduce FPS of all videos in a folder and save to output folder.
     
@@ -56,3 +56,9 @@ def reduce_video_fps(input_folder, output_folder, target_fps=5, overwrite=False)
         cap.release()
         out.release()
         print(f"Saved {filename} at {target_fps} FPS")
+
+if __name__ == "__main__":
+    input_folder = "/mnt/2/leo/fall_detection/data/test_videos"
+    output_folder = "/mnt/2/leo/fall_detection/data/test_videos_fps_reduced"
+    target_fps = 10 
+    reduce_video_fps(input_folder, output_folder, target_fps, overwrite=False)

@@ -4,7 +4,7 @@
 #include "vmsdk.h"
 
 void printUsage() {
-    std::cout << "Usage: ./fall_detection [options]" << std::endl;
+    std::cout << "Usage: ./activity_detection [options]" << std::endl;
     std::cout << "Options:" << std::endl;
     std::cout << "  --config_file PATH    Path to configuration JSON file (required)" << std::endl;
     std::cout << "  --input PATH          Input file path (image or video)" << std::endl;
@@ -12,8 +12,8 @@ void printUsage() {
     std::cout << "  --help               Show this help message" << std::endl;
     std::cout << std::endl;
     std::cout << "Examples:" << std::endl;
-    std::cout << "  ./fall_detection --config_file config.json --input input.jpg --output result.jpg" << std::endl;
-    std::cout << "  ./fall_detection --config_file config.json --input input.mp4 --output result.mp4" << std::endl;
+    std::cout << "  ./activity_detection --config_file config.json --input input.jpg --output result.jpg" << std::endl;
+    std::cout << "  ./activity_detection --config_file config.json --input input.mp4 --output result.mp4" << std::endl;
 }
 
 int main(int argc, char* argv[]) {

@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# Fall Detection SDK Build Script
+# Activity Detection SDK Build Script
 
 set -e
 
 echo "========================================="
-echo "Fall Detection SDK Build Script"
+echo "Activity Detection SDK Build Script"
 echo "========================================="
 echo ""
 
@@ -47,8 +47,8 @@ echo -e "${GREEN}=========================================${NC}"
 echo -e "${GREEN}Build completed successfully!${NC}"
 echo -e "${GREEN}=========================================${NC}"
 echo ""
-echo "Executable: $(pwd)/fall_detection"
+echo "Executable: $(pwd)/activity_detection"
 echo ""
 echo "Usage:"
-echo "  ./fall_detection --config_file ../config.json --input <video/image> --output <output>"
+echo "  ./activity_detection --config_file ../config.json --input <video/image> --output <output>"
 echo ""

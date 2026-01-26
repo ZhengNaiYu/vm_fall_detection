@@ -125,6 +125,6 @@ set(CMAKE_MAKEFILE_PRODUCTS
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
-  "CMakeFiles/fall_detection_sdk.dir/DependInfo.cmake"
-  "CMakeFiles/fall_detection.dir/DependInfo.cmake"
+  "CMakeFiles/activity_detection_sdk.dir/DependInfo.cmake"
+  "CMakeFiles/activity_detection.dir/DependInfo.cmake"
   )

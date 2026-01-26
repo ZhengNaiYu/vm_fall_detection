@@ -11,6 +11,7 @@ PoseInferencer::~PoseInferencer() {
 
 bool PoseInferencer::init(const Config& config) {
     nms_threshold_ = config.nms_threshold;
+    min_box_area_ = config.min_box_area;
     
     try {
         env_ = std::make_unique<Ort::Env>(ORT_LOGGING_LEVEL_WARNING, "PoseInferencer");
@@ -150,6 +151,13 @@ std::vector<visionmatrixsdk::falldetection::InferItem> PoseInferencer::postproce
         item.y2 = static_cast<int>((y_center + height / 2) * scale_y);
         item.w = item.x2 - item.x1;
         item.h = item.y2 - item.y1;
+        if (item.w < 0 || item.h < 0) continue;
+
+        // Filter by minimum box area (pixels^2); 0 means no filtering
+        float area = static_cast<float>(item.w) * static_cast<float>(item.h);
+        if (min_box_area_ > 0.f && area < min_box_area_) {
+            continue;
+        }
         item.sim = confidence;
         item.class0 = 0; // person class
         

@@ -1,11 +1,11 @@
-# Fall Detection SDK (C++)
+# Activity Detection SDK (C++)
 
-C++ 版本的跌倒检测 SDK，使用 ONNX Runtime 进行推理。
+C++ 版本的活动检测 SDK，使用 ONNX Runtime 进行推理。
 
 ## 功能特性
 
 - **姿态检测**: 使用 YOLO11-Pose 模型检测人体关键点
-- **跌倒检测**: 使用 LSTM 模型基于姿态序列进行跌倒分类
+- **活动检测**: 使用 LSTM 模型基于姿态序列进行动作分类
 - **实时处理**: 支持视频和图像输入
 - **高性能**: C++ 实现，支持 CPU 和 GPU 推理
 
@@ -44,7 +44,7 @@ sdk/
 │   ├── vmsdk.h                # SDK 主接口
 │   ├── config_loader.h        # 配置加载器
 │   ├── pose_inferencer.h      # 姿态检测器
-│   └── fall_detector.h        # 跌倒检测器
+│   └── activity_detector.h    # 活动/动作检测器
 ├── src/                       # 源文件
 │   ├── vmsdk.cpp
 │   ├── config_loader.cpp
@@ -70,7 +70,7 @@ cmake ..
 make -j$(nproc)
 
 # 可执行文件生成在 build/ 目录下
-ls -l fall_detection
+ls -l activity_detection
 ```
 
 ## 配置
@@ -107,7 +107,7 @@ ls -l fall_detection
 
 - **models**: 模型文件路径
   - `pose_model_path`: YOLO 姿态检测模型 (.onnx)
-  - `fall_detection_model_path`: LSTM 跌倒检测模型 (.onnx)
+    - `fall_detection_model_path`: LSTM 活动/动作检测模型 (.onnx)
   
 - **device**: 设备配置
   - `device_id`: GPU 设备 ID，-1 表示使用 CPU
@@ -131,13 +131,13 @@ ls -l fall_detection
 ### 命令行参数
 
 ```bash
-./fall_detection --config_file <config.json> --input <input_file> --output <output_file>
+./activity_detection --config_file <config.json> --input <input_file> --output <output_file>
 ```
 
 ### 处理视频
 
 ```bash
-./fall_detection \
+./activity_detection \
     --config_file ../config.json \
     --input ../data/test_videos/test_video.mp4 \
     --output output_result.mp4
@@ -146,7 +146,7 @@ ls -l fall_detection
 ### 处理图像
 
 ```bash
-./fall_detection \
+./activity_detection \
     --config_file ../config.json \
     --input test_image.jpg \
     --output result_image.jpg
@@ -158,13 +158,13 @@ ls -l fall_detection
 cd build
 
 # 处理测试视频
-./fall_detection \
+./activity_detection \
     --config_file ../config.json \
     --input ../../data/test_videos/recorded_video_20260115_111419_30fps.mp4 \
-    --output fall_detection_result.mp4
+    --output activity_detection_result.mp4
 
 # 处理图像
-./fall_detection \
+./activity_detection \
     --config_file ../config.json \
     --input test.jpg \
     --output result.jpg

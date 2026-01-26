@@ -9,7 +9,7 @@ import yaml
 from ultralytics import YOLO
 
 from src.utils.pose_buffer import PoseBuffer
-from src.models import FallDetectionLSTM, ImprovedLSTM, TransformerEncoder
+from src.models import LSTM, GRU, BiLSTMAttention, Transformer
 from src.models import detect_fall_by_physics
 
 
@@ -82,13 +82,16 @@ def build_activity_model(cfg):
         dropout_prob=infer_cfg.get("dropout_prob", 0.5)
     )
     
-    if model_type == "ImprovedLSTM":
-        activity_model = ImprovedLSTM(**params)
+    if model_type == "BiLSTMAttention" or model_type == "ImprovedLSTM":
+        # Support both new and old names for backward compatibility
+        activity_model = BiLSTMAttention(**params)
     elif model_type == "Transformer":
         params['nhead'] = infer_cfg.get('nhead', 4)
-        activity_model = TransformerEncoder(**params)
+        activity_model = Transformer(**params)
+    elif model_type == "GRU":
+        activity_model = GRU(**params)
     else:  # 默认LSTM
-        activity_model = FallDetectionLSTM(**params)
+        activity_model = LSTM(**params)
 
     ckpt_path = infer_cfg.get("lstm_model_path")
     if ckpt_path:
